@@ -5,11 +5,26 @@ from .forms import CityForm
 
 def index(request):
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&APPID=a8e40e23f81508dac1055201e717b938'
+    err_msg = ''
+    message = ''
+    message_class = ''
     if request.method == 'POST':
         form = CityForm(request.POST)
-        form.save()
+        # prevent duplicates
+        if form.is_valid():
+            new_city = form.cleaned_data['name']
+            existing_city_count = City.objects.filter(name=new_city).count()
+            if existing_city_count == 0:
+                r = requests.get(url.format(new_city)).json()
+                #print(r)
+                if r['cod'] == 200:    
+                    form.save()
+                else:
+                    err_msg = 'City does not exist!'
+            else:
+                err_msg = 'City is already added in the List!'
+    #print(err_msg)
     form = CityForm()
-
     cities = City.objects.all()
     weather_data = []
     for city in cities:
