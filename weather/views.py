@@ -1,5 +1,5 @@
 import requests
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import City
 from .forms import CityForm
 
@@ -23,6 +23,12 @@ def index(request):
                     err_msg = 'City does not exist!'
             else:
                 err_msg = 'City is already added in the List!'
+        if err_msg:
+            message = err_msg
+            message_class = 'is-danger'
+        else:
+            message = 'City added successfully!'
+            message_class = 'is-success'
     #print(err_msg)
     form = CityForm()
     cities = City.objects.all()
@@ -39,5 +45,16 @@ def index(request):
         weather_data.append(city_weather)
     #print(weather_data)
     #print(city_weather)
-    context = {'weather_data' : weather_data, 'form' : form}
+    context = {
+        'weather_data' : weather_data, 
+        'form' : form,
+        'message' : message,
+        'message_class' : message_class
+    }
     return render(request, 'weather/weather.html', context)
+
+
+def delete_city(request, city_name):
+    City.objects.get(name=city_name).delete()
+    return redirect('home')
+

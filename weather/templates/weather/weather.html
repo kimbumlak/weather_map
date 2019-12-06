@@ -13,7 +13,7 @@
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
-                    What's the weather like?
+                    Weather Map - Search City to check Weather!
                 </h1>
             </div>
         </div>
@@ -34,6 +34,9 @@
                                 </button>
                             </div>
                         </div>
+                        {% if message %}
+                            <div class="notification {{ message_class }}">{{ message }}</div>
+                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -60,6 +63,11 @@
                                         <br> {{ city_weather.description }}
                                     </p>
                                 </div>
+                            </div>
+                            <div class="media-right">
+                                <a href="{% url 'delete_city' city_weather.city %}">
+                                    <button class="delete"></button>
+                                </a>
                             </div>
                         </article>
                     </div>
